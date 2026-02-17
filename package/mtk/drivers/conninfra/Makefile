@@ -9,8 +9,7 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=conninfra
-PKG_VERSION:=f2fa25
-PKG_SOURCE:=mt79xx_conninfra_20231229-f2fa25.tar.xz
+PKG_VERSION:=bbf588
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)
 PKG_MAINTAINER:=Kun-Ze Syue<kun-ze.syue@mediatek.com>
 
