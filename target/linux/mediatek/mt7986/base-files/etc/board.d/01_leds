@@ -9,6 +9,11 @@ board=$(board_name)
 board_config_update
 
 case $board in
+clx,s20p*)
+	ucidef_set_led_netdev "wlan5g" "5G" "wlan5g" "rax0"
+	ucidef_set_led_netdev "wlan2g" "2.4G" "wlan2g" "ra0"
+	ucidef_set_led_timer "sys" "SYS" "sys" "1000" "2000"
+	;;
 xiaomi,redmi-router-ax6000*)
 	ucidef_set_led_default "status" "status" "rgb:status" "1"
 	ucidef_set_led_netdev "wan" "wan" "rgb:network" "eth1"

@@ -450,6 +450,34 @@ define Device/BPI-R3MINI-EMMC
 endef
 TARGET_DEVICES += BPI-R3MINI-EMMC
 
+define Device/clx_s20p-dsa
+  DEVICE_VENDOR := CLX
+  DEVICE_MODEL := S20P DSA
+  DEVICE_DTS := mt7986a-clx-s20p-dsa
+  DEVICE_DTS_DIR := $(DTS_DIR)/mediatek
+  SUPPORTED_DEVICES := clx,s20p-dsa
+  DEVICE_PACKAGES := $(MT7986_USB_PKGS) $(MT7986_WWAN_PKGS) \
+		     mkf2fs e2fsprogs blkid blockdev losetup kmod-fs-ext4 \
+		     kmod-mmc kmod-nvme pciutils kmod-fs-f2fs kmod-fs-vfat kmod-nls-cp437 \
+		     kmod-nls-iso8859-1
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += clx_s20p-dsa
+
+define Device/clx_s20p-gsw
+  DEVICE_VENDOR := CLX
+  DEVICE_MODEL := S20P GSW
+  DEVICE_DTS := mt7986a-clx-s20p-gsw
+  DEVICE_DTS_DIR := $(DTS_DIR)/mediatek
+  SUPPORTED_DEVICES := clx,s20p-gsw
+  DEVICE_PACKAGES := $(MT7986_USB_PKGS) $(MT7986_WWAN_PKGS) \
+		     mkf2fs e2fsprogs blkid blockdev losetup kmod-fs-ext4 \
+		     kmod-mmc kmod-nvme pciutils kmod-fs-f2fs kmod-fs-vfat kmod-nls-cp437 \
+		     kmod-nls-iso8859-1
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += clx_s20p-gsw
+
 define Device/jdcloud_re-cp-03
   DEVICE_VENDOR := JDCloud
   DEVICE_MODEL := RE-CP-03

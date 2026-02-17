@@ -735,6 +735,7 @@ setup_model()
 	case $board in
 	xiaomi,redmi-router-ax6000* |\
 	bananapi,bpi-r3mini* |\
+	clx,s20p* |\
 	netcore,n60 |\
 	glinet,gl-mt6000|\
 	ruijie,rg-x60-pro* |\

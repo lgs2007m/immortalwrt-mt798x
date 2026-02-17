@@ -9,15 +9,13 @@ mediatek_setup_interfaces()
 	local board="$1"
 
 	case $board in
-	*fpga*)
-		ucidef_set_interfaces_lan_wan "eth0" "eth1"
-		ucidef_add_switch "switch0" \
-			"0:lan" "1:lan" "2:lan" "3:lan" "4:wan" "6u@eth0" "5u@eth1"
+	clx,s20p-dsa)
+		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4 lan5 lan6" eth1
 		;;
-	*gsw*)
+	clx,s20p-gsw)
 		ucidef_set_interfaces_lan_wan "eth0" "eth1"
 		ucidef_add_switch "switch0" \
-			"0:lan" "1:lan" "2:lan" "3:lan" "4:lan" "5:lan" "6u@eth0"
+			"0:lan:5" "1:lan:4" "2:lan:3" "3:lan:2" "4:lan:1" "5:lan:6" "6u@eth0"
 		;;
 	xiaomi,redmi-router-ax6000*)
 		ucidef_set_interfaces_lan_wan "eth0" "eth1"
@@ -54,6 +52,16 @@ mediatek_setup_interfaces()
  	tplink,tl-xdr6088)
  		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4 lan5" eth1
  		;;
+ 	*fpga*)
+		ucidef_set_interfaces_lan_wan "eth0" "eth1"
+		ucidef_add_switch "switch0" \
+			"0:lan" "1:lan" "2:lan" "3:lan" "4:wan" "6u@eth0" "5u@eth1"
+		;;
+	*gsw*)
+		ucidef_set_interfaces_lan_wan "eth0" "eth1"
+		ucidef_add_switch "switch0" \
+			"0:lan" "1:lan" "2:lan" "3:lan" "4:lan" "5:lan" "6u@eth0"
+		;;
 	*)
 		ucidef_set_interfaces_lan_wan "lan0 lan1 lan2 lan3 lan4 lan5" eth1
 		;;
@@ -108,6 +116,7 @@ mediatek_setup_macs()
 			echo "MacAddress=$b1mac" >> ${b1dat}
 		fi
  		;;
+ 	clx,s20p* |\
 	jdcloud,re-cp-03)
 		lan_mac=$(mmc_get_mac_binary factory 0x2a)
 		wan_mac=$(mmc_get_mac_binary factory 0x24)
