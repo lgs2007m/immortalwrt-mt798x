@@ -1,0 +1,360 @@
+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
+/dts-v1/;
+
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/leds/common.h>
+
+#include "mt7986a.dtsi"
+#include "mt7986a-pinctrl.dtsi"
+/ {
+	model = "YVR X6";
+	compatible = "yvr,x6", "mediatek,mt7986a";
+	chosen {
+		bootargs = "console=ttyS0,115200n1 loglevel=8  \
+				earlycon=uart8250,mmio32,0x11002000";
+	};
+
+	aliases {
+		led-boot = &led_board_blue;
+ 		led-failsafe = &led_board_red;
+ 		led-running = &led_board_green;
+ 		led-upgrade = &led_board_blue;
+	};
+
+	memory {
+		reg = <0 0x40000000 0 0x10000000>;
+	};
+
+	gsw: gsw@0 {
+		compatible = "mediatek,mt753x";
+		mediatek,ethsys = <&ethsys>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+	};
+
+    	gpio-keys {
+ 		compatible = "gpio-keys";
+
+ 		button-reset {
+ 			label = "reset";
+ 			linux,code = <KEY_RESTART>;
+ 			gpios = <&pio 9 GPIO_ACTIVE_LOW>;
+ 		};
+ 	};
+
+	gpio-leds {
+		compatible = "gpio-leds";
+
+		led_board_red: status_red {
+ 			label = "board_red:status";
+ 			gpios = <&pio 1 GPIO_ACTIVE_HIGH>;
+ 		};
+
+ 		led_board_green: status_green {
+ 			label = "board_green:status";
+ 			gpios = <&pio 22 GPIO_ACTIVE_HIGH>;
+ 		};
+
+ 		led_board_blue: status_blue {
+ 			label = "board_blue:status";
+ 			gpios = <&pio 21 GPIO_ACTIVE_HIGH>;
+ 		};
+	};
+
+	reg_1p8v: regulator-1p8v {
+		compatible = "regulator-fixed";
+		regulator-name = "fixed-1.8V";
+		regulator-min-microvolt = <1800000>;
+		regulator-max-microvolt = <1800000>;
+		regulator-boot-on;
+		regulator-always-on;
+	};
+
+	reg_3p3v: regulator-3p3v {
+		compatible = "regulator-fixed";
+		regulator-name = "fixed-3.3V";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-boot-on;
+		regulator-always-on;
+	};
+
+	usb_vbus: regulator-usb-vbus {
+		compatible = "regulator-fixed";
+		regulator-name = "usb_vbus";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		enable-active-high;
+		regulator-boot-on;
+	};
+
+	nmbm_spim_nand {
+		compatible = "generic,nmbm";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		lower-mtd-device = <&spi_nand>;
+		forced-create;
+
+	           partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			partition@0 {
+				label = "BL2";
+				reg = <0x000000 0x100000>;
+				read-only;
+			};
+
+			partition@100000 {
+				label = "u-boot-env";
+				reg = <0x100000 0x80000>;
+			};
+
+			Factory: partition@180000 {
+				label = "Factory";
+				reg = <0x180000 0x100000>;
+			};
+
+			Factory_info: partition@280000 {
+				label = "Factory_info";
+				reg = <0x280000 0x100000>;
+			};
+
+			partition@380000 {
+				label = "FIP";
+				reg = <0x380000 0x200000>;
+			};
+
+			partition@580000 {
+				label = "ubi";
+				reg = <0x580000 0x7200000>;
+			};
+		};
+	};
+};
+
+&eth {
+	status = "okay";
+
+	gmac0: mac@0 {
+		compatible = "mediatek,eth-mac";
+		reg = <0>;
+		phy-mode = "2500base-x";
+
+		fixed-link {
+			speed = <2500>;
+			full-duplex;
+			pause;
+		};	
+	};
+
+	gmac1: mac@1 {
+		compatible = "mediatek,eth-mac";
+		reg = <1>;
+		phy-mode = "2500base-x";
+
+		fixed-link {
+			speed = <2500>;
+			full-duplex;
+			pause;
+		};
+
+	};
+
+	mdio: mdio-bus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reset-gpios = <&pio 6 GPIO_ACTIVE_LOW>;
+		reset-delay-us = <60000>;
+
+		phy6: phy@6 {
+			compatible = "ethernet-phy-id67c9.de0a";
+			phy-mode = "2500base-x";
+			reg = <6>;
+		};
+	};
+};
+
+&gsw {
+	mediatek,mdio = <&mdio>;
+	mediatek,portmap = "lllll";
+	mediatek,mdio_master_pinmux = <1>;
+	reset-gpios = <&pio 5 GPIO_ACTIVE_HIGH>;
+	interrupt-parent = <&pio>;
+	interrupts = <66 IRQ_TYPE_LEVEL_HIGH>;
+	status = "okay";
+
+	port6: port@6 {
+		compatible = "mediatek,mt753x-port";
+		mediatek,ssc-on; 
+		reg = <6>;
+		phy-mode = "sgmii";
+		fixed-link {
+			speed = <2500>;
+			full-duplex;
+		};
+	};
+};
+
+&hnat {
+	mtketh-wan = "eth1";
+	mtketh-lan = "eth0";
+	mtketh-max-gmac = <2>;
+	status = "okay";
+};
+
+&xhci {
+ 	vusb33-supply = <&reg_3p3v>;
+ 	vbus-supply = <&usb_vbus>;
+ 	status = "okay";
+};
+
+&i2c0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c_pins>;
+	status = "okay";
+
+	wm8960: wm8960@1a {
+		compatible = "wlf,wm8960";
+		reg = <0x1a>;
+	};
+
+	// RGB LEDs - PCA9633 I2C LED控制器
+	pca9633: led-controller@62 {
+		compatible = "nxp,pca9633";
+		//nxp,hw-blink;  // 如果需要硬件闪烁功能可以取消注释
+		nxp,totem-pole;
+        	nxp,inverted-out;
+        	reg = <0x62>;
+        	#address-cells = <1>;
+        	#size-cells = <0>;
+
+		led_rgb_red: red@0 {
+			label = "red";
+			color = <LED_COLOR_ID_RED>;
+			function = LED_FUNCTION_INDICATOR;
+			reg = <0>;
+		};
+
+		led_rgb_green: green@1 {
+			label = "green";
+			color = <LED_COLOR_ID_GREEN>;
+			function = LED_FUNCTION_INDICATOR;
+			reg = <1>;
+		};
+
+		led_rgb_blue: blue@2 {
+			label = "blue";
+			color = <LED_COLOR_ID_BLUE>;
+			function = LED_FUNCTION_INDICATOR;
+			reg = <2>;
+		};
+		// LED是RGB灯珠，只使用0 1 2通道，通道3未使用
+		led_rgb_unused: unused@3 {
+			label = "unused";
+			reg = <3>;
+		};
+	};
+};
+
+&pio {
+	spi_flash_pins: spi-flash-pins-33-to-38 {
+		mux {
+			function = "flash";
+			groups = "spi0", "spi0_wp_hold";
+		};
+		conf-pu {
+			pins = "SPI2_CS", "SPI2_HOLD", "SPI2_WP";
+			drive-strength = <8>;
+			mediatek,pull-up-adv = <0>;
+		};
+		conf-pd {
+			pins = "SPI2_CLK", "SPI2_MOSI", "SPI2_MISO";
+			drive-strength = <8>;
+			mediatek,pull-down-adv = <0>;
+		};
+	};
+
+	wf_2g_5g_pins: wf_2g_5g-pins {
+		mux {
+			function = "wifi";
+			groups = "wf_2g", "wf_5g";
+		};
+		conf {
+			pins = "WF0_HB1", "WF0_HB2", "WF0_HB3", "WF0_HB4",
+			       "WF0_HB0", "WF0_HB0_B", "WF0_HB5", "WF0_HB6",
+			       "WF0_HB7", "WF0_HB8", "WF0_HB9", "WF0_HB10",
+			       "WF0_TOP_CLK", "WF0_TOP_DATA", "WF1_HB1",
+			       "WF1_HB2", "WF1_HB3", "WF1_HB4", "WF1_HB0",
+			       "WF1_HB5", "WF1_HB6", "WF1_HB7", "WF1_HB8",
+			       "WF1_TOP_CLK", "WF1_TOP_DATA";
+			drive-strength = <MTK_DRIVE_4mA>;
+		};
+	};
+
+	wf_dbdc_pins: wf_dbdc-pins {
+		mux {
+			function = "wifi";
+			groups = "wf_dbdc";
+		};
+		conf {
+			pins = "WF0_HB1", "WF0_HB2", "WF0_HB3", "WF0_HB4",
+			       "WF0_HB0", "WF0_HB0_B", "WF0_HB5", "WF0_HB6",
+			       "WF0_HB7", "WF0_HB8", "WF0_HB9", "WF0_HB10",
+			       "WF0_TOP_CLK", "WF0_TOP_DATA", "WF1_HB1",
+			       "WF1_HB2", "WF1_HB3", "WF1_HB4", "WF1_HB0",
+			       "WF1_HB5", "WF1_HB6", "WF1_HB7", "WF1_HB8",
+			       "WF1_TOP_CLK", "WF1_TOP_DATA";
+			drive-strength = <MTK_DRIVE_4mA>;
+		};
+	};
+};
+
+&pcie0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pcie0_pins>;
+	status = "okay";
+};
+
+&uart0 {
+	status = "okay";
+};
+
+&spi0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&spi_flash_pins>;
+	status = "okay";
+	cs-gpios = <0>, <0>;
+
+	spi_nand: spi_nand@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "spi-nand";
+		reg = <1>;
+		spi-max-frequency = <20000000>;
+		spi-tx-buswidth = <4>;
+		spi-rx-buswidth = <4>;
+	};
+};
+
+&spi1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&spic_pins_g1>;
+ 	status = "okay";
+};
+
+&wbsys {
+	status = "okay";
+	mediatek,mtd-eeprom = <&Factory 0x0000>;
+};
+
+&watchdog {
+	status = "okay";
+};
+
+&auxadc {
+	status = "okay";
+};

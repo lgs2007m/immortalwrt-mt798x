@@ -552,3 +552,20 @@ define Device/zyxel_ex5700
     IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
 endef
 TARGET_DEVICES += zyxel_ex5700
+
+define Device/yvr_x6
+  DEVICE_VENDOR := YVR
+  DEVICE_MODEL := X6
+  DEVICE_DTS := mt7986a-yvr-x6
+  DEVICE_DTS_DIR := $(DTS_DIR)/mediatek
+  DEVICE_PACKAGES := $(MT7986_USB_PKGS) $(MT7986_WWAN_PKGS) kmod-leds-pca963x
+  SUPPORTED_DEVICES := yvr,x6
+  UBINIZE_OPTS := -E 5
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  KERNEL_IN_UBI := 1
+  IMAGES += factory.bin
+  IMAGE/factory.bin := append-ubi | check-size $$$$(IMAGE_SIZE)
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += yvr_x6

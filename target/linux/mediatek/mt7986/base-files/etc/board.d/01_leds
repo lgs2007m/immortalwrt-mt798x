@@ -13,6 +13,12 @@ xiaomi,redmi-router-ax6000*)
 	ucidef_set_led_default "status" "status" "rgb:status" "1"
 	ucidef_set_led_netdev "wan" "wan" "rgb:network" "eth1"
 	;;
+yvr,x6*)
+	ucidef_set_led_default "board_green" "On board green led off" "board_green:status" "0"
+	_ucidef_set_led_trigger "board_green" "On board green led off" "board_green:status" "none"
+	ucidef_set_led_default "status" "Upper green led on" "pca963x:green" "1"
+	_ucidef_set_led_trigger "status" "Upper green led on" "pca963x:green" "default-on"
+	;;
 esac
 
 board_config_flush

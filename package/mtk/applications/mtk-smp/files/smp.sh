@@ -741,6 +741,7 @@ setup_model()
 	jdcloud,re-cp-03 |\
 	tplink,tl-xdr608* |\
 	zyxel,ex5700 |\
+	yvr,x6* |\
 	*7986*)
 		MT7986_whnat $num_of_wifi $usbnet
 		;;
