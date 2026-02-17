@@ -217,6 +217,7 @@ platform_do_upgrade() {
 	*snand*)
 		nand_do_upgrade "$1"
 		;;
+	bt,r320 |\
 	cmcc,rax3000m-emmc |\
 	cmcc,xr30-emmc |\
 	*emmc*)
@@ -259,6 +260,7 @@ platform_check_image() {
 	*clt,r30b1* |\
 	*imou,lc-hx3001* |\
 	*jcg,q30* |\
+	bt,r320 |\
 	cmcc,a10 |\
 	cmcc,rax3000m* |\
 	cmcc,xr30* |\

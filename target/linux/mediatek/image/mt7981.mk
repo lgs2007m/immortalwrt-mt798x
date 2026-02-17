@@ -564,6 +564,18 @@ define Device/livinet_zr-3020
 endef
 TARGET_DEVICES += livinet_zr-3020
 
+define Device/bt_r320
+  DEVICE_VENDOR := Globitel
+  DEVICE_MODEL := BT R320
+  DEVICE_DTS := mt7981-bt-r320
+  DEVICE_DTS_DIR := $(DTS_DIR)/mediatek
+  SUPPORTED_DEVICES := bt,r320
+  DEVICE_PACKAGES := $(MT7981_USB_PKGS) f2fsck losetup mkf2fs kmod-fs-f2fs kmod-mmc \
+	luci-app-samba4
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += bt_r320
+
 define Device/cmcc_a10
   DEVICE_VENDOR := CMCC
   DEVICE_MODEL := A10

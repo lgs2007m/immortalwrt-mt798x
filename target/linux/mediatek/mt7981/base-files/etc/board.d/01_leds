@@ -16,6 +16,10 @@ abt,asr3000)
 	ucidef_set_led_netdev "wlan2g" "WLAN2G" "green:wlan2g" "ra0"
 	ucidef_set_led_netdev "wlan5g" "WLAN5G" "green:wlan5g" "rax0"
 	;;
+bt,r320)
+	ucidef_set_led_netdev "wlan2g" "2.4G" "wlan2g" "ra0"
+	ucidef_set_led_netdev "wlan5g" "5G" "wlan5g" "rax0"
+	;;
 clt,r30b1)
 	ucidef_set_led_default "all_ctrl" "ALL_CTRL" "ctrl_led_all" "1"
 	ucidef_set_led_default "internet" "INTERNET" "led_internet" "1"
